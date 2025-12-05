@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 HUB - Навчальна Платформа</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg-primary:#ffffff;--bg-secondary:#f8f9fa;--bg-tertiary:#f1f3f5;--bg-hover:#e9ecef;--border-color:#dee2e6;--border-light:#e9ecef;--text-primary:#212529;--text-secondary:#495057;--text-tertiary:#868e96;--text-inverted:#ffffff;--accent:#4263eb;--accent-hover:#3b5bdb;--accent-light:#4c6ef5;--success:#51cf66;--success-light:#69db7c;--warning:#fab005;--danger:#fa5252;--shadow-sm:0 1px 3px rgba(0,0,0,0.05);--shadow-md:0 4px 6px rgba(0,0,0,0.07);--shadow-lg:0 10px 15px rgba(0,0,0,0.1)}
+[data-theme="dark"]{--bg-primary:#1a1b1e;--bg-secondary:#25262b;--bg-tertiary:#2c2e33;--bg-hover:#373a40;--border-color:#373a40;--border-light:#2c2e33;--text-primary:#e9ecef;--text-secondary:#adb5bd;--text-tertiary:#868e96;--text-inverted:#1a1b1e;--accent:#5c7cfa;--accent-hover:#748ffc;--accent-light:#4c6ef5;--success:#51cf66;--success-light:#69db7c;--warning:#ffd43b;--danger:#ff6b6b;--shadow-sm:0 1px 3px rgba(0,0,0,0.3);--shadow-md:0 4px 6px rgba(0,0,0,0.4);--shadow-lg:0 10px 15px rgba(0,0,0,0.5)}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes progressPulse{0%,100%{opacity:1}50%{opacity:0.7}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes checkmark{0%{transform:scale(0) rotate(-45deg)}50%{transform:scale(1.2) rotate(-45deg)}100%{transform:scale(1) rotate(-45deg)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg-primary);color:var(--text-primary);transition:all 0.3s ease}
+.container{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:260px;border-right:1px solid var(--border-color);display:flex;flex-direction:column;background:var(--bg-primary);transition:all 0.3s ease}
+.sidebar-header{padding:24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;animation:fadeIn 0.3s ease}
+.sidebar-header h2{font-size:20px;font-weight:600;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.theme-toggle{width:36px;height:36px;border-radius:8px;border:none;background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;position:relative;overflow:hidden}
+.theme-toggle:hover{background:var(--bg-hover);color:var(--text-primary);transform:scale(1.05)}
+.theme-toggle:active{transform:scale(0.95)}
+.theme-toggle svg{width:18px;height:18px;transition:transform 0.3s ease}
+.theme-toggle:hover svg{transform:rotate(20deg)}
+.sidebar-nav{flex:1;padding:16px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:none;background:transparent;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);width:100%;text-align:left;font-size:14px;font-weight:500;color:var(--text-secondary);margin-bottom:4px;position:relative;overflow:hidden}
+.nav-item::before{content:'';position:absolute;left:0;top:0;width:3px;height:100%;background:var(--accent);transform:scaleY(0);transition:transform 0.2s ease}
+.nav-item:hover{background:var(--bg-tertiary);transform:translateX(2px)}
+.nav-item.active{background:var(--bg-secondary);color:var(--accent)}
+.nav-item.active::before{transform:scaleY(1)}
+.nav-item svg{width:20px;height:20px;flex-shrink:0;transition:transform 0.2s ease}
+.nav-item:hover svg{transform:scale(1.1)}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border-color)}
+.user-info{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;transition:background 0.2s ease}
+.user-info:hover{background:var(--bg-tertiary)}
+.user-avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent-light));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:600}
+.user-details{flex:1;min-width:0}
+.user-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-meta{font-size:12px;color:var(--text-tertiary)}
+.main-content{flex:1;overflow-y:auto;padding:32px 40px;animation:fadeIn 0.4s ease}
+h1{font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:-0.5px;animation:slideUp 0.4s ease}
+.subtitle{color:var(--text-tertiary);margin-bottom:28px;font-size:14px;animation:slideUp 0.4s ease 0.1s backwards}
+.progress-card{background:linear-gradient(135deg,var(--bg-secondary) 0%,var(--bg-tertiary) 100%);border:1px solid var(--border-color);border-radius:12px;padding:24px;margin-bottom:28px;box-shadow:var(--shadow-sm);animation:slideUp 0.4s ease 0.2s backwards;transition:all 0.3s ease}
+.progress-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.progress-label{font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+.progress-value{font-size:32px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--success));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:progressPulse 2s ease-in-out infinite}
+.progress-bar{width:100%;height:8px;background:var(--border-light);border-radius:10px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--success));border-radius:10px;transition:width 1s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+.progress-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);animation:shimmer 2s infinite}
+.progress-text{font-size:12px;color:var(--text-tertiary);margin-top:12px;font-weight:500}
+.section-title{font-size:18px;font-weight:600;margin-bottom:16px;letter-spacing:-0.3px;color:var(--text-primary)}
+.card{background:var(--bg-primary);border:1px solid var(--border-color);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
+.card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-4px)}
+.card:active{transform:translateY(-2px) scale(0.98)}
+.card-content{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.card-left{display:flex;align-items:center;gap:14px}
+.card-icon{width:44px;height:44px;background:var(--bg-tertiary);border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);flex-shrink:0}
+.card:hover .card-icon{background:var(--accent);transform:scale(1.1) rotate(5deg)}
+.card-icon svg{width:20px;height:20px;color:var(--text-secondary);transition:color 0.3s ease}
+.card:hover .card-icon svg{color:white}
+.card-text h3{font-size:15px;font-weight:600;margin-bottom:4px;transition:color 0.2s ease}
+.card:hover .card-text h3{color:var(--accent)}
+.card-meta{font-size:13px;color:var(--text-tertiary)}
+.chevron{width:20px;height:20px;color:var(--text-tertiary);transition:all 0.3s ease;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.chevron svg{width:20px;height:20px}
+.card:hover .chevron{color:var(--accent);transform:translateX(4px)}
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;animation:fadeIn 0.5s ease}
+.module-tile{background:var(--bg-primary);border:1px solid var(--border-color);border-radius:16px;overflow:hidden;transition:all 0.3s ease;box-shadow:var(--shadow-sm);cursor:pointer;animation:slideUp 0.4s ease calc(var(--index) * 0.1s) backwards}
+.module-tile:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.module-tile.locked{opacity:0.7;cursor:not-allowed}
+.module-tile.locked:hover{transform:none;box-shadow:var(--shadow-sm)}
+.module-cover{height:140px;background:linear-gradient(135deg,var(--accent),var(--accent-light));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.module-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,0.15),transparent)}
+.module-cover-icon{font-size:48px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2))}
+.module-body{padding:20px}
+.module-header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.module-title-section{flex:1}
+.module-tile-title{font-size:16px;font-weight:600;margin-bottom:6px;line-height:1.3}
+.module-tile-subtitle{font-size:13px;color:var(--text-tertiary)}
+.module-progress-circle{flex-shrink:0}
+.module-stats{display:flex;gap:16px;padding-top:12px;border-top:1px solid var(--border-light);margin-top:12px}
+.module-stat{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary)}
+.module-stat svg{width:16px;height:16px;color:var(--text-tertiary)}
+.locked-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.locked-badge-large{background:var(--bg-primary);color:var(--text-primary);padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg)}
+.locked-badge-large svg{width:16px;height:16px}
+.circular-progress{width:40px;height:40px;position:relative}
+.circular-progress svg{transform:rotate(-90deg)}
+.circular-progress-bg{fill:none;stroke:var(--border-light);stroke-width:3}
+.circular-progress-fill{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 0.5s ease}
+.circular-progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:600;color:var(--accent)}
+.lessons-list{border-top:1px solid var(--border-light);background:var(--bg-secondary)}
+.lesson-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:all 0.2s ease;border:none;background:transparent;width:100%;text-align:left;position:relative}
+.lesson-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);transform:scaleY(0);transition:transform 0.2s ease}
+.lesson-item:last-child{border-bottom:none}
+.lesson-item:not(.locked):hover{background:var(--bg-primary);padding-left:24px}
+.lesson-item:not(.locked):hover::before{transform:scaleY(1)}
+.lesson-item:not(.locked):active{transform:scale(0.99)}
+.lesson-item.locked{opacity:0.5;cursor:not-allowed}
+.lesson-item-left{display:flex;align-items:center;gap:12px}
+.lesson-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-color);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);flex-shrink:0;position:relative}
+.lesson-checkbox.completed{background:var(--success);border-color:var(--success);display:flex;align-items:center;justify-content:center;animation:scaleIn 0.3s ease}
+.lesson-checkbox.completed::after{content:'✓';color:white;font-size:12px;font-weight:700;animation:checkmark 0.4s ease}
+.lesson-title{font-size:14px;font-weight:500;color:var(--text-primary)}
+.lesson-item.completed .lesson-title{color:var(--text-secondary);opacity:0.8}
+.lesson-item-right{display:flex;align-items:center;gap:8px}
+.lesson-duration{font-size:12px;color:var(--text-tertiary);font-weight:500}
+.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
+.resource-tile{background:var(--bg-primary);border:1px solid var(--border-color);border-radius:12px;padding:16px;text-decoration:none;color:inherit;transition:all 0.3s ease;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);animation:slideUp 0.3s ease calc(var(--index) * 0.05s) backwards}
+.resource-tile:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.resource-tile:active{transform:translateY(-1px) scale(0.99)}
+.resource-logo{width:48px;height:48px;border-radius:10px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px;font-weight:600;color:var(--accent);border:1px solid var(--border-light)}
+.resource-info{flex:1;min-width:0}
+.resource-name{font-size:15px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resource-description{font-size:12px;color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resource-arrow{width:18px;height:18px;color:var(--text-tertiary);flex-shrink:0;transition:all 0.3s ease}
+.resource-tile:hover .resource-arrow{color:var(--accent);transform:translateX(4px)}
+.warning-card{background:linear-gradient(135deg,rgba(250,176,5,0.1),rgba(250,82,82,0.1));border:1px solid var(--warning);border-radius:12px;padding:18px;display:flex;gap:14px;animation:slideUp 0.4s ease 0.3s backwards}
+.warning-icon{width:24px;height:24px;color:var(--warning);flex-shrink:0}
+.warning-content h3{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.warning-content p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.search-box{position:relative;margin-bottom:20px;animation:slideUp 0.4s ease 0.1s backwards}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-tertiary);pointer-events:none;transition:color 0.2s ease}
+.search-icon svg{width:18px;height:18px}
+.search-input{width:100%;padding:12px 16px 12px 44px;border:2px solid var(--border-color);border-radius:10px;font-size:14px;outline:none;transition:all 0.2s ease;background:var(--bg-primary);color:var(--text-primary)}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(66,99,235,0.1)}
+.article-card{background:var(--bg-primary);border:1px solid var(--border-color);border-radius:12px;padding:18px;cursor:pointer;transition:all 0.3s ease;margin-bottom:12px;box-shadow:var(--shadow-sm);animation:slideUp 0.3s ease calc(var(--index) * 0.05s) backwards}
+.article-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.article-card:active{transform:translateY(-1px) scale(0.99)}
+.article-content{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.article-info{flex:1}
+.article-title{font-size:15px;font-weight:600;margin-bottom:8px;transition:color 0.2s ease;line-height:1.4}
+.article-card:hover .article-title{color:var(--accent)}
+.article-meta{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-tertiary)}
+.article-category{background:var(--bg-tertiary);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+.article-view{animation:fadeIn 0.4s ease}
+.article-view h1{margin-bottom:20px}
+.article-view .article-meta{margin-bottom:32px}
+.article-body{line-height:1.8;font-size:15px;color:var(--text-secondary)}
+.article-body h2{font-size:22px;font-weight:600;margin-top:32px;margin-bottom:16px;color:var(--text-primary)}
+.article-body h3{font-size:18px;font-weight:600;margin-top:24px;margin-bottom:12px;color:var(--text-primary)}
+.article-body p{margin-bottom:16px}
+.article-body ul,.article-body ol{padding-left:24px;margin-bottom:16px}
+.article-body li{margin-bottom:8px}
+.article-body strong{font-weight:600;color:var(--text-primary)}
+.video-placeholder{background:linear-gradient(135deg,var(--accent),var(--accent-light));border-radius:12px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;margin-bottom:28px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;animation:scaleIn 0.5s ease}
+.video-placeholder::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,0.1),transparent)}
+.video-placeholder svg{width:56px;height:56px;opacity:0.9;margin-bottom:16px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));animation:float 3s ease-in-out infinite}
+.video-placeholder p{font-size:14px;opacity:0.9;font-weight:500}
+.lesson-actions{display:flex;align-items:center;gap:12px;margin-bottom:28px;animation:slideUp 0.4s ease 0.2s backwards}
+.btn-primary{padding:12px 24px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);border:none;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,0.5);transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s}
+.btn-primary:active::before{width:300px;height:300px}
+.btn-primary.completed{background:var(--success);color:white;box-shadow:0 4px 12px rgba(81,207,102,0.3)}
+.btn-primary.completed:hover{background:var(--success-light);transform:translateY(-2px);box-shadow:0 6px 16px rgba(81,207,102,0.4)}
+.btn-primary:not(.completed){background:var(--accent);color:white;box-shadow:0 4px 12px rgba(66,99,235,0.3)}
+.btn-primary:not(.completed):hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 6px 16px rgba(66,99,235,0.4)}
+.btn-primary:active{transform:scale(0.96)}
+.btn-icon{padding:10px;border-radius:10px;border:2px solid var(--border-color);background:var(--bg-primary);cursor:pointer;transition:all 0.2s ease;position:relative}
+.btn-icon:hover{background:var(--bg-tertiary);border-color:var(--accent);transform:scale(1.05)}
+.btn-icon:active{transform:scale(0.95)}
+.btn-icon svg{width:20px;height:20px;display:block}
+.btn-icon.bookmarked{border-color:var(--accent);background:var(--accent)}
+.btn-icon.bookmarked svg{fill:white;color:white}
+.btn-icon.bookmarked:hover{transform:scale(1.1) rotate(10deg)}
+.btn-icon:not(.bookmarked) svg{color:var(--text-tertiary)}
+.lesson-description{max-width:none;animation:fadeIn 0.4s ease 0.3s backwards}
+.lesson-description h3{font-size:18px;font-weight:600;margin-bottom:12px;letter-spacing:-0.3px}
+.lesson-description p{color:var(--text-secondary);line-height:1.7;margin-bottom:16px;font-size:15px}
+.lesson-description h4{font-size:15px;font-weight:600;margin-top:24px;margin-bottom:12px;color:var(--text-primary)}
+.lesson-description ul{color:var(--text-secondary);padding-left:20px}
+.lesson-description li{margin-bottom:8px;line-height:1.6;font-size:14px}
+.lesson-nav{display:flex;align-items:center;justify-content:space-between;margin-top:40px;padding-top:28px;border-top:1px solid var(--border-color)}
+.lesson-nav button{font-size:14px;font-weight:500;background:none;border:none;cursor:pointer;transition:all 0.2s ease;padding:8px 16px;border-radius:8px}
+.lesson-nav button:disabled{color:var(--text-tertiary);cursor:not-allowed;opacity:0.5}
+.lesson-nav button:not(:disabled){color:var(--accent)}
+.lesson-nav button:not(:disabled):hover{background:var(--bg-tertiary);transform:translateX(4px)}
+.lesson-nav button:not(:disabled):active{transform:scale(0.96)}
+.back-button{font-size:14px;color:var(--text-tertiary);background:none;border:none;cursor:pointer;margin-bottom:24px;transition:all 0.2s ease;padding:8px 12px;border-radius:8px;display:inline-flex;align-items:center;gap:4px}
+.back-button:hover{color:var(--accent);background:var(--bg-tertiary);transform:translateX(-4px)}
+.lesson-header-meta{display:flex;align-items:center;gap:16px;font-size:14px;color:var(--text-tertiary);margin-bottom:28px;animation:slideUp 0.4s ease 0.1s backwards}
+.lesson-header-meta-item{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg-tertiary);border-radius:8px;font-weight:500}
+.lesson-header-meta svg{width:16px;height:16px}
+.empty-state{text-align:center;padding:60px 0;animation:fadeIn 0.5s ease}
+.empty-state svg{width:56px;height:56px;color:var(--border-color);margin:0 auto 20px;opacity:0.5}
+.empty-state p{color:var(--text-tertiary);font-size:15px}
+.tip-card{background:linear-gradient(135deg,var(--bg-secondary),var(--bg-tertiary));border:1px solid var(--border-color);border-radius:12px;padding:20px;margin-top:24px;box-shadow:var(--shadow-sm);animation:slideUp 0.4s ease 0.2s backwards}
+.tip-card h3{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.tip-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:12px;padding:16px 20px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:12px;z-index:1000;animation:slideUp 0.3s ease}
+.toast.success{border-color:var(--success)}
+.toast-icon{width:24px;height:24px;border-radius:50%;background:var(--success);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.toast-message{font-size:14px;font-weight:500}
+.confetti{position:fixed;width:10px;height:10px;background:var(--accent);animation:confetti 3s ease-out forwards;z-index:999}
+.confetti:nth-child(2n){background:var(--success)}
+.confetti:nth-child(3n){background:var(--accent-light)}
+@media (max-width:1024px){.modules-grid{grid-template-columns:1fr}.resources-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}}
+@media (max-width:768px){.sidebar{display:none}.main-content{padding:20px}.modules-grid{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-secondary)}
+::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+const BookOpen=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"}));
+const Video=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"}));
+const FileText=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"}));
+const Bookmark=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"}));
+const Star=({filled})=>React.createElement("svg",{fill:filled?"currentColor":"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"}));
+const Search=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"}));
+const ChevronRight=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M9 5l7 7-7 7"}));
+const Play=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"}),React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M21 12a9 9 0 11-18 0 9 9 0 0118 0z"}));
+const Clock=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"}));
+const Moon=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"}));
+const Sun=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"}));
+const Lock=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"}));
+const AlertTriangle=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"}));
+const CheckCircle=()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"}));
+
+function Web3LearningPlatform(){
+const[currentView,setCurrentView]=useState('dashboard');
+const[selectedLesson,setSelectedLesson]=useState(null);
+const[selectedArticle,setSelectedArticle]=useState(null);
+const[completedLessons,setCompletedLessons]=useState([]);
+const[bookmarkedLessons,setBookmarkedLessons]=useState([]);
+const[searchQuery,setSearchQuery]=useState('');
+const[theme,setTheme]=useState('light');
+const[toast,setToast]=useState(null);
+
+const toggleTheme=()=>{
+const newTheme=theme==='light'?'dark':'light';
+setTheme(newTheme);
+document.documentElement.setAttribute('data-theme',newTheme);
+};
+
+const showToast=(message,type='success')=>{
+setToast({message,type});
+setTimeout(()=>setToast(null),3000);
+};
+
+const createConfetti=()=>{
+const colors=['#4263eb','#51cf66','#4c6ef5'];
+for(let i=0;i<30;i++){
+const confetti=document.createElement('div');
+confetti.className='confetti';
+confetti.style.left=Math.random()*window.innerWidth+'px';
+confetti.style.top='-10px';
+confetti.style.background=colors[Math.floor(Math.random()*colors.length)];
+confetti.style.animationDelay=Math.random()*0.3+'s';
+document.body.appendChild(confetti);
+setTimeout(()=>confetti.remove(),3000);
+}
+};
+
+const courseProgress=Math.round((completedLessons.length/23)*100);
+
+const courseStructure=[
+{id:1,title:'Теорія with анімацією',subtitle:'Основи блокчейн технологій',emoji:'📚',type:'theory',status:'active',totalLessons:5,lessons:[
+{id:'l1',title:'Блокчейн',duration:'12 хв',locked:false},
+{id:'l2',title:'Сети, токени',duration:'15 хв',locked:false},
+{id:'l3',title:'Біржі, кошельки, seed',duration:'18 хв',locked:false},
+{id:'l4',title:'DEX/CEX',duration:'14 хв',locked:false},
+{id:'l5',title:'Безопасність, скам',duration:'20 хв',locked:false}
+]},
+{id:2,title:'Практика з дошкою',subtitle:'Механіка ринків та торгівля',emoji:'📊',type:'practice',status:'locked',totalLessons:2,lessons:[
+{id:'l6',title:'Механіка ринка и цикли',duration:'25 хв',locked:true},
+{id:'l7',title:'Психологія ринка й торговлі',duration:'22 хв',locked:true}
+]},
+{id:3,title:'Step by Step',subtitle:'Практичні інструкції',emoji:'🎬',type:'stepbystep',status:'locked',totalLessons:1,lessons:[
+{id:'l11',title:'Створення кошелька',duration:'10 хв',locked:true}
+]},
+{id:4,title:'Web3 Career',subtitle:'Кар\'єра в криптоіндустрії',emoji:'💼',type:'career',status:'locked',totalLessons:1,lessons:[
+{id:'l16',title:'Особистий бренд в крипті',duration:'24 хв',locked:true}
+]},
+{id:5,title:'Expert Talks',subtitle:'Інтерв\'ю з професіоналами',emoji:'🎙️',type:'talks',status:'locked',totalLessons:1,lessons:[
+{id:'l20',title:"Інтерв'ю з Top 1 трейдером",duration:'45 хв',locked:true}
+]}
+];
+
+const resourcesData=[
+{name:'Binance',description:'Найбільша криптобіржа',url:'https://www.binance.com',logo:'B',color:'#F3BA2F'},
+{name:'OKX',description:'Глобальна крипто-платформа',url:'https://www.okx.com',logo:'O',color:'#000000'},
+{name:'Bybit',description:'Деривативна торгівля',url:'https://www.bybit.com',logo:'By',color:'#F7A600'},
+{name:'MEXC',description:'Швидка біржа для альткоїнів',url:'https://www.mexc.com',logo:'M',color:'#00D4AA'},
+{name:'CoinMarketCap',description:'Ціни та капіталізація',url:'https://coinmarketcap.com',logo:'CM',color:'#3861FB'},
+{name:'CoinGecko',description:'Криптовалютний трекер',url:'https://www.coingecko.com',logo:'CG',color:'#8DC63F'},
+{name:'Etherscan',description:'Ethereum blockchain explorer',url:'https://etherscan.io',logo:'E',color:'#21325B'},
+{name:'DeFi Llama',description:'TVL трекер DeFi',url:'https://defillama.com',logo:'DL',color:'#2D51FF'},
+{name:'Dune Analytics',description:'Blockchain аналітика',url:'https://dune.com',logo:'D',color:'#FF5C00'},
+{name:'TradingView',description:'Графіки та аналіз',url:'https://www.tradingview.com',logo:'TV',color:'#131722'},
+{name:'MetaMask',description:'Web3 гаманець',url:'https://metamask.io',logo:'MM',color:'#F6851B'},
+{name:'Trust Wallet',description:'Мобільний криптогаманець',url:'https://trustwallet.com',logo:'TW',color:'#3375BB'}
+];
+
+const articlesData={
+a1:{id:'a1',title:'Що таке блокчейн? Повний гід для початківців',category:'Основи',readTime:'8 хв',
+content:`<h2>Вступ до блокчейну</h2><p>Блокчейн — це революційна технологія, яка змінює спосіб зберігання та передачі даних в цифровому світі.</p><h3>Що таке блокчейн?</h3><p>Блокчейн - це розподілена база даних, яка зберігає інформацію у вигляді ланцюжка блоків.</p>`},
+a2:{id:'a2',title:'Топ-10 помилок новачків у криптовалютах',category:'Безпека',readTime:'6 хв',
+content:`<h2>Уникайте цих помилок</h2><p>Криптовалютний світ може бути складним для новачків.</p>`},
+a3:{id:'a3',title:'DeFi екосистема: Як це працює',category:'DeFi',readTime:'12 хв',
+content:`<h2>Decentralized Finance</h2><p>DeFi - це фінансова екосистема без посередників.</p>`},
+a4:{id:'a4',title:'NFT: Від мистецтва до утиліти',category:'NFT',readTime:'10 хв',
+content:`<h2>Non-Fungible Tokens</h2><p>NFT - це унікальні цифрові активи.</p>`},
+a5:{id:'a5',title:'Стратегії управління ризиками',category:'Трейдинг',readTime:'15 хв',
+content:`<h2>Risk Management</h2><p>Управління ризиками - ключ до успіху.</p>`}
+};
+
+const articles=Object.values(articlesData);
+
+const toggleComplete=(lessonId)=>{
+if(completedLessons.includes(lessonId)){
+setCompletedLessons(prev=>prev.filter(id=>id!==lessonId));
+}else{
+setCompletedLessons(prev=>[...prev,lessonId]);
+showToast('Урок завершено! 🎉');
+}
+};
+
+const toggleBookmark=(lessonId)=>{
+if(bookmarkedLessons.includes(lessonId)){
+setBookmarkedLessons(prev=>prev.filter(id=>id!==lessonId));
+showToast('Видалено з закладок');
+}else{
+setBookmarkedLessons(prev=>[...prev,lessonId]);
+showToast('Додано в закладки ⭐');
+}
+};
+
+const isLessonCompleted=(lessonId)=>completedLessons.includes(lessonId);
+const isLessonBookmarked=(lessonId)=>bookmarkedLessons.includes(lessonId);
+
+const openLesson=(lesson)=>{
+setSelectedLesson(lesson);
+setCurrentView('lesson');
+};
+
+const openArticle=(article)=>{
+setSelectedArticle(article);
+setCurrentView('article');
+};
+
+const getModuleProgress=(module)=>{
+const completed=module.lessons.filter(l=>isLessonCompleted(l.id)).length;
+return Math.round((completed/module.lessons.length)*100);
+};
+
+const CircularProgress=({percent})=>{
+const radius=18;
+const circumference=2*Math.PI*radius;
+const offset=circumference-(percent/100)*circumference;
+return React.createElement("div",{className:"circular-progress"},
+React.createElement("svg",{width:"40",height:"40"},
+React.createElement("circle",{className:"circular-progress-bg",cx:"20",cy:"20",r:radius}),
+React.createElement("circle",{className:"circular-progress-fill",cx:"20",cy:"20",r:radius,strokeDasharray:circumference,strokeDashoffset:offset})
+),
+React.createElement("div",{className:"circular-progress-text"},percent,"%")
+);
+};
+
+const DashboardView=()=>React.createElement("div",null,
+React.createElement("div",{style:{marginBottom:'32px'}},
+React.createElement("h1",null,"Вітаємо назад 👋"),
+React.createElement("p",{className:"subtitle"},"Продовжуйте навчання з того місця, де зупинились")
+),
+React.createElement("div",{className:"progress-card"},
+React.createElement("div",{className:"progress-header"},
+React.createElement("span",{className:"progress-label"},"Загальний прогрес"),
+React.createElement("span",{className:"progress-value"},courseProgress,"%")
+),
+React.createElement("div",{className:"progress-bar"},
+React.createElement("div",{className:"progress-fill",style:{width:`${courseProgress}%`}})
+),
+React.createElement("p",{className:"progress-text"},completedLessons.length," з 23 уроків завершено")
+),
+React.createElement("div",{style:{marginBottom:'28px'}},
+React.createElement("h2",{className:"section-title"},"Продовжити навчання"),
+React.createElement("div",{className:"card",onClick:()=>openLesson(courseStructure[0].lessons[1])},
+React.createElement("div",{className:"card-content"},
+React.createElement("div",{className:"card-left"},
+React.createElement("div",{className:"card-icon"},React.createElement(Play,null)),
+React.createElement("div",{className:"card-text"},
+React.createElement("h3",null,"Сети, токени"),
+React.createElement("p",{className:"card-meta"},"Теорія with анімацією • 15 хв")
+)
+),
+React.createElement("div",{className:"chevron"},React.createElement(ChevronRight,null))
+)
+)
+),
+React.createElement("div",null,
+React.createElement("h2",{className:"section-title"},"Навчальна програма"),
+React.createElement("div",{className:"modules-grid"},
+courseStructure.map((module,index)=>
+React.createElement("div",{
+key:module.id,
+className:`module-tile ${module.status==='locked'?'locked':''}`,
+style:{'--index':index}
+},
+React.createElement("div",{className:"module-cover",style:{background:`linear-gradient(135deg, ${module.status==='locked'?'var(--bg-tertiary)':'var(--accent)'}, ${module.status==='locked'?'var(--bg-hover)':'var(--accent-light)'})`}},
+React.createElement("div",{className:"module-cover-icon"},module.emoji),
+module.status==='locked'&&React.createElement("div",{className:"locked-overlay"},
+React.createElement("div",{className:"locked-badge-large"},
+React.createElement(Lock,null),
+React.createElement("span",null,"Заблоковано")
+)
+)
+),
+React.createElement("div",{className:"module-body"},
+React.createElement("div",{className:"module-header-row"},
+React.createElement("div",{className:"module-title-section"},
+React.createElement("div",{className:"module-tile-title"},module.title),
+React.createElement("div",{className:"module-tile-subtitle"},module.subtitle)
+),
+module.status!=='locked'&&React.createElement("div",{className:"module-progress-circle"},
+React.createElement(CircularProgress,{percent:getModuleProgress(module)})
+)
+),
+React.createElement("div",{className:"module-stats"},
+React.createElement("div",{className:"module-stat"},
+React.createElement(Video,null),
+React.createElement("span",null,module.totalLessons," ",module.totalLessons===1?'урок':module.totalLessons<5?'уроки':'уроків')
+),
+module.status!=='locked'&&React.createElement("div",{className:"module-stat"},
+React.createElement(CheckCircle,null),
+React.createElement("span",null,module.lessons.filter(l=>isLessonCompleted(l.id)).length," завершено")
+)
+)
+)
+)
+)
+)
+)
+);
+
+const LessonView=()=>React.createElement("div",null,
+React.createElement("button",{className:"back-button",onClick:()=>setCurrentView('dashboard')},"← Назад до курсу"),
+React.createElement("div",{style:{maxWidth:'900px'}},
+React.createElement("h1",null,selectedLesson?.title),
+React.createElement("div",{className:"lesson-header-meta"},
+React.createElement("div",{className:"lesson-header-meta-item"},
+React.createElement(Clock,null),
+React.createElement("span",null,selectedLesson?.duration)
+),
+React.createElement("div",{className:"lesson-header-meta-item"},"Теорія with анімацією")
+),
+React.createElement("div",{className:"video-placeholder"},
+React.createElement(Play,null),
+React.createElement("p",null,"VdoCipher Player буде тут")
+),
+React.createElement("div",{className:"lesson-actions"},
+React.createElement("button",{
+onClick:()=>toggleComplete(selectedLesson?.id),
+className:`btn-primary ${isLessonCompleted(selectedLesson?.id)?'completed':''}`
+},
+isLessonCompleted(selectedLesson?.id)?'✓ Завершено':'Відмітити як завершений'
+),
+React.createElement("button",{
+onClick:()=>toggleBookmark(selectedLesson?.id),
+className:`btn-icon ${isLessonBookmarked(selectedLesson?.id)?'bookmarked':''}`
+},
+React.createElement(Star,{filled:isLessonBookmarked(selectedLesson?.id)})
+)
+),
+React.createElement("div",{className:"lesson-description"},
+React.createElement("h3",null,"Про цей урок"),
+React.createElement("p",null,"У цьому уроці ви дізнаєтесь про основи роботи блокчейн мереж, що таке токени і як вони функціонують в екосистемі."),
+React.createElement("h4",null,"Ключові теми:"),
+React.createElement("ul",null,
+React.createElement("li",null,"Що таке блокчейн мережа"),
+React.createElement("li",null,"Різниця між Layer 1 та Layer 2"),
+React.createElement("li",null,"Типи токенів (utility, security, governance)"),
+React.createElement("li",null,"Основні мережі: Ethereum, Solana, Polygon")
+)
+),
+React.createElement("div",{className:"lesson-nav"},
+React.createElement("button",{disabled:true},"← Попередній урок"),
+React.createElement("button",null,"Наступний урок →")
+)
+)
+);
+
+const LibraryView=()=>React.createElement("div",null,
+React.createElement("h1",null,"Бібліотека статей"),
+React.createElement("p",{className:"subtitle"},"Текстові матеріали та гіди"),
+React.createElement("div",{className:"search-box"},
+React.createElement("div",{className:"search-icon"},React.createElement(Search,null)),
+React.createElement("input",{
+type:"text",
+placeholder:"Пошук статей...",
+value:searchQuery,
+onChange:(e)=>setSearchQuery(e.target.value),
+className:"search-input"
+})
+),
+articles.map((article,index)=>
+React.createElement("div",{
+key:article.id,
+className:"article-card",
+style:{'--index':index},
+onClick:()=>openArticle(article)
+},
+React.createElement("div",{className:"article-content"},
+React.createElement("div",{className:"article-info"},
+React.createElement("div",{className:"article-title"},article.title),
+React.createElement("div",{className:"article-meta"},
+React.createElement("span",{className:"article-category"},article.category),
+React.createElement("span",null,article.readTime)
+)
+),
+React.createElement("div",{className:"chevron"},React.createElement(ChevronRight,null))
+)
+)
+)
+);
+
+const ArticleView=()=>React.createElement("div",{className:"article-view"},
+React.createElement("button",{className:"back-button",onClick:()=>setCurrentView('library')},"← Назад до бібліотеки"),
+React.createElement("h1",null,selectedArticle?.title),
+React.createElement("div",{className:"article-meta",style:{marginBottom:'32px'}},
+React.createElement("span",{className:"article-category"},selectedArticle?.category),
+React.createElement("span",null,selectedArticle?.readTime)
+),
+React.createElement("div",{
+className:"article-body",
+dangerouslySetInnerHTML:{__html:selectedArticle?.content}
+})
+);
+
+const BookmarksView=()=>{
+const bookmarkedLessonData=courseStructure.flatMap(module=>module.lessons).filter(lesson=>bookmarkedLessons.includes(lesson.id));
+return React.createElement("div",null,
+React.createElement("h1",null,"Закладки"),
+React.createElement("p",{className:"subtitle"},
+bookmarkedLessonData.length>0?`Збережено ${bookmarkedLessonData.length} уроків`:'Немає збережених уроків'
+),
+bookmarkedLessonData.length===0?
+React.createElement("div",{className:"empty-state"},
+React.createElement(Star,null),
+React.createElement("p",null,"Додайте уроки в закладки, щоб швидко повертатись до них")
+):
+bookmarkedLessonData.map((lesson)=>
+React.createElement("div",{key:lesson.id,className:"card",onClick:()=>openLesson(lesson)},
+React.createElement("div",{className:"card-content"},
+React.createElement("div",{className:"card-left"},
+React.createElement("div",{className:"card-icon"},React.createElement(Play,null)),
+React.createElement("div",{className:"card-text"},
+React.createElement("h3",null,lesson.title),
+React.createElement("p",{className:"card-meta"},lesson.duration)
+)
+),
+React.createElement("button",{
+onClick:(e)=>{e.stopPropagation();toggleBookmark(lesson.id)},
+className:"btn-icon bookmarked"
+},
+React.createElement(Star,{filled:true})
+)
+)
+)
+)
+);
+};
+
+const ResourcesView=()=>React.createElement("div",null,
+React.createElement("h1",null,"Корисні матеріали"),
+React.createElement("p",{className:"subtitle"},"Перевірені сервіси та ресурси для роботи з криптовалютами"),
+React.createElement("div",null,
+React.createElement("h3",{className:"section-title"},"Біржі та сервіси"),
+React.createElement("div",{className:"resources-grid"},
+resourcesData.map((resource,index)=>
+React.createElement("a",{
+key:index,
+href:resource.url,
+target:"_blank",
+rel:"noopener noreferrer",
+className:"resource-tile",
+style:{'--index':index}
+},
+React.createElement("div",{className:"resource-logo",style:{background:`${resource.color}15`,borderColor:`${resource.color}30`,color:resource.color}},
+resource.logo
+),
+React.createElement("div",{className:"resource-info"},
+React.createElement("div",{className:"resource-name"},resource.name),
+React.createElement("div",{className:"resource-description"},resource.description)
+),
+React.createElement("div",{className:"resource-arrow"},
+React.createElement(ChevronRight,null)
+)
+)
+)
+)
+),
+React.createElement("div",{className:"warning-card"},
+React.createElement("div",{className:"warning-icon"},
+React.createElement(AlertTriangle,null)
+),
+React.createElement("div",{className:"warning-content"},
+React.createElement("h3",null,"⚠️ Важливо для безпеки"),
+React.createElement("p",null,"Ніколи не шукайте посилання на криптосервіси через Google! Шахраї часто створюють фейкові сайти, які виглядають як оригінали. Завжди використовуйте тільки офіційні посилання, які ми надаємо тут, або вводьте адреси вручну. Перевіряйте URL перед входом на сайт. Ваша безпека - наш пріоритет!")
+)
+)
+);
+
+return React.createElement("div",{className:"container"},
+React.createElement("aside",{className:"sidebar"},
+React.createElement("div",{className:"sidebar-header"},
+React.createElement("h2",null,"Web3 HUB"),
+React.createElement("button",{onClick:toggleTheme,className:"theme-toggle",title:"Змінити тему"},
+theme==='light'?React.createElement(Moon,null):React.createElement(Sun,null)
+)
+),
+React.createElement("nav",{className:"sidebar-nav"},
+React.createElement("button",{
+onClick:()=>setCurrentView('dashboard'),
+className:`nav-item ${currentView==='dashboard'?'active':''}`
+},
+React.createElement(BookOpen,null),
+React.createElement("span",null,"Навчання")
+),
+React.createElement("button",{
+onClick:()=>setCurrentView('library'),
+className:`nav-item ${currentView==='library'||currentView==='article'?'active':''}`
+},
+React.createElement(FileText,null),
+React.createElement("span",null,"Бібліотека")
+),
+React.createElement("button",{
+onClick:()=>setCurrentView('bookmarks'),
+className:`nav-item ${currentView==='bookmarks'?'active':''}`
+},
+React.createElement(Bookmark,null),
+React.createElement("span",null,"Закладки")
+),
+React.createElement("button",{
+onClick:()=>setCurrentView('resources'),
+className:`nav-item ${currentView==='resources'?'active':''}`
+},
+React.createElement(Star,null),
+React.createElement("span",null,"Корисні матеріали")
+)
+),
+React.createElement("div",{className:"sidebar-footer"},
+React.createElement("div",{className:"user-info"},
+React.createElement("div",{className:"user-avatar"},"К"),
+React.createElement("div",{className:"user-details"},
+React.createElement("div",{className:"user-name"},"Користувач"),
+React.createElement("div",{className:"user-meta"},"via Telegram")
+)
+)
+)
+),
+React.createElement("main",{className:"main-content"},
+currentView==='dashboard'&&React.createElement(DashboardView,null),
+currentView==='lesson'&&React.createElement(LessonView,null),
+currentView==='library'&&React.createElement(LibraryView,null),
+currentView==='article'&&React.createElement(ArticleView,null),
+currentView==='bookmarks'&&React.createElement(BookmarksView,null),
+currentView==='resources'&&React.createElement(ResourcesView,null)
+),
+toast&&React.createElement("div",{className:`toast ${toast.type}`},
+React.createElement("div",{className:"toast-icon"},"✓"),
+React.createElement("div",{className:"toast-message"},toast.message)
+)
+);
+}
+
+ReactDOM.render(React.createElement(Web3LearningPlatform,null),document.getElementById('root'));
+</script>
+</body>
+</html>

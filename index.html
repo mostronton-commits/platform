@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEB3HUB EDUCATION by a01k</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--white:#ffffff;
+--black:#000000;
+--light-gray:#E0C5CA;
+--vivid-purple:#9E44FF;
+--bg:#ffffff;
+--bg-hover:#f9fafb;
+--bg-secondary:#f8f8f8;
+--border:#e5e7eb;
+--text:#111827;
+--text-secondary:#6b7280;
+--text-tertiary:#9ca3af;
+--purple-hover:#8a3de6;
+--purple-light:#b366ff;
+--shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+--shadow:0 1px 3px rgba(0,0,0,0.1);
+--shadow-md:0 4px 6px rgba(0,0,0,0.1);
+--shadow-lg:0 10px 15px rgba(0,0,0,0.1);
+--radius:8px;
+--radius-lg:12px
+}
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+-webkit-font-smoothing:antialiased;
+background:var(--bg);
+color:var(--text);
+line-height:1.6
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.app-container{display:flex;min-height:100vh}
+.sidebar{
+width:240px;
+background:var(--white);
+border-right:1px solid var(--border);
+display:flex;
+flex-direction:column;
+position:fixed;
+left:0;
+top:0;
+bottom:0;
+z-index:100
+}
+.sidebar-header{
+padding:24px 20px;
+border-bottom:1px solid var(--border)
+}
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+text-decoration:none;
+cursor:pointer
+}
+.logo-shapes{
+display:flex;
+gap:3px;
+align-items:flex-end
+}
+.shape{
+background:var(--black);
+border-radius:2px;
+transition:all 0.3s ease
+}
+.shape-1{width:8px;height:22px}
+.shape-2{width:8px;height:18px}
+.shape-3{width:6px;height:14px}
+.shape-4{width:8px;height:18px}
+.shape-5{width:6px;height:16px}
+.logo:hover .shape{
+background:var(--vivid-purple);
+transform:translateY(-2px)
+}
+.logo-text{line-height:1.1}
+.logo-main{
+font-size:15px;
+font-weight:700;
+color:var(--black);
+letter-spacing:-0.5px
+}
+.logo-sub{
+font-size:11px;
+color:var(--text-tertiary);
+font-weight:500;
+margin-top:2px
+}
+.logo-author{
+font-size:9px;
+color:var(--text-tertiary);
+margin-top:1px
+}
+.nav{
+flex:1;
+padding:16px 12px;
+overflow-y:auto
+}
+.nav-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:10px 12px;
+border-radius:var(--radius);
+border:none;
+background:transparent;
+color:var(--text-secondary);
+font-size:14px;
+font-weight:500;
+cursor:pointer;
+transition:all 0.15s ease;
+width:100%;
+text-align:left;
+margin-bottom:4px;
+position:relative
+}
+.nav-item:hover{
+background:var(--bg-hover);
+color:var(--text)
+}
+.nav-item.active{
+background:rgba(158,68,255,0.08);
+color:var(--vivid-purple);
+font-weight:600
+}
+.nav-item.active::before{
+content:'';
+position:absolute;
+left:0;
+top:6px;
+bottom:6px;
+width:3px;
+background:var(--vivid-purple);
+border-radius:0 2px 2px 0
+}
+.nav-icon{
+width:20px;
+height:20px;
+flex-shrink:0
+}
+.nav-icon svg{
+width:20px;
+height:20px
+}
+.sidebar-footer{
+padding:16px;
+border-top:1px solid var(--border)
+}
+.user-card{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
+border-radius:var(--radius);
+background:var(--bg-secondary);
+cursor:pointer;
+transition:all 0.2s ease
+}
+.user-card:hover{
+background:var(--bg-hover);
+transform:translateY(-1px)
+}
+.user-avatar{
+width:36px;
+height:36px;
+border-radius:50%;
+background:linear-gradient(135deg,var(--vivid-purple),var(--purple-light));
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:14px;
+font-weight:700;
+flex-shrink:0
+}
+.user-info{flex:1;min-width:0}
+.user-name{
+font-size:13px;
+font-weight:600;
+color:var(--text);
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+.user-days{
+font-size:11px;
+color:var(--text-tertiary);
+margin-top:2px
+}
+.main{
+flex:1;
+margin-left:240px;
+padding:40px 48px;
+max-width:1400px;
+animation:fadeIn 0.3s ease
+}
+.page-header{
+margin-bottom:32px;
+animation:slideUp 0.4s ease
+}
+.page-title{
+font-size:36px;
+font-weight:800;
+color:var(--text);
+margin-bottom:8px;
+letter-spacing:-1px
+}
+.page-subtitle{
+font-size:16px;
+color:var(--text-secondary);
+font-weight:400
+}
+.progress-section{
+background:linear-gradient(135deg,rgba(158,68,255,0.04),rgba(224,197,202,0.04));
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:28px;
+margin-bottom:40px;
+animation:slideUp 0.5s ease 0.1s backwards
+}
+.progress-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px
+}
+.progress-label{
+font-size:11px;
+font-weight:700;
+color:var(--text-secondary);
+text-transform:uppercase;
+letter-spacing:1px
+}
+.progress-percent{
+font-size:42px;
+font-weight:900;
+background:linear-gradient(135deg,var(--vivid-purple),var(--black));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+line-height:1
+}
+.progress-bar-wrap{
+height:10px;
+background:var(--bg-secondary);
+border-radius:20px;
+overflow:hidden;
+position:relative
+}
+.progress-bar{
+height:100%;
+background:linear-gradient(90deg,var(--vivid-purple),var(--purple-light));
+border-radius:20px;
+transition:width 1s cubic-bezier(0.4,0,0.2,1);
+position:relative;
+overflow:hidden
+}
+.progress-bar::after{
+content:'';
+position:absolute;
+inset:0;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
+animation:shimmer 2.5s infinite
+}
+.progress-info{
+font-size:13px;
+color:var(--text-tertiary);
+margin-top:14px;
+font-weight:500
+}
+.section-title{
+font-size:20px;
+font-weight:700;
+margin-bottom:20px;
+color:var(--text);
+letter-spacing:-0.4px
+}
+.continue-card{
+background:var(--white);
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:20px;
+display:flex;
+align-items:center;
+gap:20px;
+cursor:pointer;
+transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+margin-bottom:40px;
+box-shadow:var(--shadow-sm);
+animation:slideUp 0.5s ease 0.2s backwards
+}
+.continue-card:hover{
+box-shadow:var(--shadow-md);
+transform:translateY(-3px);
+border-color:var(--vivid-purple)
+}
+.continue-icon{
+width:56px;
+height:56px;
+background:var(--vivid-purple);
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+flex-shrink:0;
+transition:transform 0.2s ease
+}
+.continue-card:hover .continue-icon{
+transform:scale(1.05) rotate(5deg)
+}
+.continue-icon svg{
+width:28px;
+height:28px
+}
+.continue-text{flex:1}
+.continue-title{
+font-size:16px;
+font-weight:700;
+color:var(--text);
+margin-bottom:6px
+}
+.continue-meta{
+font-size:14px;
+color:var(--text-secondary)
+}
+.continue-arrow{
+width:24px;
+height:24px;
+color:var(--text-tertiary);
+transition:all 0.2s ease;
+flex-shrink:0
+}
+.continue-arrow svg{
+width:24px;
+height:24px
+}
+.continue-card:hover .continue-arrow{
+color:var(--vivid-purple);
+transform:translateX(6px)
+}
+.modules-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:24px;
+margin-bottom:48px
+}
+.module{
+background:var(--white);
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+overflow:hidden;
+cursor:pointer;
+transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+box-shadow:var(--shadow-sm);
+animation:slideUp 0.5s ease calc(var(--index) * 0.1s) backwards
+}
+.module:hover{
+box-shadow:var(--shadow-lg);
+transform:translateY(-6px);
+border-color:rgba(158,68,255,0.3)
+}
+.module.locked{
+opacity:0.7;
+cursor:not-allowed
+}
+.module.locked:hover{
+transform:none;
+box-shadow:var(--shadow-sm);
+border-color:var(--border)
+}
+.module-cover{
+height:160px;
+background:var(--black);
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden
+}
+.module-cover.active{
+background:linear-gradient(135deg,var(--vivid-purple),var(--purple-light))
+}
+.module-cover.locked{
+background:linear-gradient(135deg,#d1d5db,#9ca3af)
+}
+.module-cover::before{
+content:'';
+position:absolute;
+inset:0;
+background:radial-gradient(circle at 35% 45%,rgba(255,255,255,0.12),transparent 65%)
+}
+.module-emoji{
+font-size:72px;
+position:relative;
+z-index:1;
+filter:drop-shadow(0 6px 12px rgba(0,0,0,0.2));
+user-select:none
+}
+.lock-overlay{
+position:absolute;
+inset:0;
+background:rgba(0,0,0,0.35);
+backdrop-filter:blur(3px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:2
+}
+.lock-badge{
+background:white;
+padding:10px 20px;
+border-radius:24px;
+font-size:13px;
+font-weight:700;
+color:var(--text);
+display:flex;
+align-items:center;
+gap:10px;
+box-shadow:0 8px 24px rgba(0,0,0,0.3)
+}
+.lock-badge svg{
+width:18px;
+height:18px
+}
+.module-body{
+padding:24px
+}
+.module-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:16px;
+margin-bottom:16px
+}
+.module-info{
+flex:1;
+min-width:0
+}
+.module-title{
+font-size:17px;
+font-weight:700;
+color:var(--text);
+margin-bottom:8px;
+line-height:1.3
+}
+.module-subtitle{
+font-size:14px;
+color:var(--text-secondary);
+line-height:1.4
+}
+.progress-circle{
+flex-shrink:0
+}
+.circle-wrap{
+width:52px;
+height:52px;
+position:relative
+}
+.circle-wrap svg{
+transform:rotate(-90deg)
+}
+.circle-bg{
+fill:none;
+stroke:var(--bg-secondary);
+stroke-width:4
+}
+.circle-progress{
+fill:none;
+stroke:var(--vivid-purple);
+stroke-width:4;
+stroke-linecap:round;
+transition:stroke-dashoffset 0.6s ease
+}
+.circle-text{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:13px;
+font-weight:800;
+color:var(--vivid-purple)
+}
+.module-stats{
+display:flex;
+gap:24px;
+padding-top:16px;
+border-top:1px solid var(--border)
+}
+.module-stat{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+color:var(--text-secondary);
+font-weight:500
+}
+.module-stat svg{
+width:18px;
+height:18px;
+color:var(--text-tertiary)
+}
+.lesson-page{
+max-width:1200px
+}
+.back-btn{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 14px;
+border-radius:var(--radius);
+border:none;
+background:transparent;
+color:var(--text-secondary);
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:all 0.2s ease;
+margin-bottom:28px
+}
+.back-btn:hover{
+background:var(--bg-hover);
+color:var(--text);
+transform:translateX(-3px)
+}
+.back-btn svg{
+width:18px;
+height:18px
+}
+.lesson-header{
+margin-bottom:28px
+}
+.lesson-title{
+font-size:32px;
+font-weight:800;
+margin-bottom:14px;
+letter-spacing:-0.8px;
+color:var(--text)
+}
+.lesson-meta-row{
+display:flex;
+gap:16px;
+flex-wrap:wrap
+}
+.lesson-badge{
+display:flex;
+align-items:center;
+gap:8px;
+padding:8px 14px;
+background:var(--bg-secondary);
+border-radius:var(--radius);
+font-size:13px;
+color:var(--text-secondary);
+font-weight:600
+}
+.lesson-badge svg{
+width:18px;
+height:18px
+}
+.lesson-grid{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:28px
+}
+.lessons-sidebar{
+background:var(--white);
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:20px;
+position:sticky;
+top:28px;
+max-height:calc(100vh - 150px);
+overflow-y:auto
+}
+.sidebar-title{
+font-size:15px;
+font-weight:700;
+margin-bottom:16px;
+color:var(--text)
+}
+.lesson-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
+border-radius:var(--radius);
+cursor:pointer;
+transition:all 0.15s ease;
+border:none;
+background:transparent;
+width:100%;
+text-align:left;
+margin-bottom:4px
+}
+.lesson-item:hover{
+background:var(--bg-hover)
+}
+.lesson-item.active{
+background:rgba(158,68,255,0.08)
+}
+.lesson-item.completed .lesson-name{
+color:var(--text-tertiary);
+text-decoration:line-through
+}
+.lesson-check{
+width:20px;
+height:20px;
+border-radius:50%;
+border:2px solid var(--border);
+flex-shrink:0;
+transition:all 0.2s ease;
+display:flex;
+align-items:center;
+justify-content:center
+}
+.lesson-check.done{
+background:var(--vivid-purple);
+border-color:var(--vivid-purple)
+}
+.lesson-check.done::after{
+content:'✓';
+color:white;
+font-size:12px;
+font-weight:800
+}
+.lesson-name{
+font-size:13px;
+font-weight:600;
+color:var(--text);
+flex:1;
+line-height:1.3
+}
+.lesson-time{
+font-size:11px;
+color:var(--text-tertiary);
+font-weight:600;
+flex-shrink:0
+}
+.lesson-content{
+flex:1
+}
+.video-box{
+background:var(--black);
+border-radius:var(--radius-lg);
+aspect-ratio:16/9;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:28px;
+position:relative;
+overflow:hidden;
+box-shadow:var(--shadow-lg)
+}
+.video-placeholder{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+color:white
+}
+.video-placeholder svg{
+width:72px;
+height:72px;
+opacity:0.8
+}
+.video-placeholder-text{
+font-size:16px;
+font-weight:600;
+opacity:0.9
+}
+.actions{
+display:flex;
+gap:14px;
+margin-bottom:28px
+}
+.btn{
+padding:14px 28px;
+border-radius:var(--radius);
+border:none;
+font-size:14px;
+font-weight:700;
+cursor:pointer;
+transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+display:inline-flex;
+align-items:center;
+gap:8px
+}
+.btn-primary{
+background:var(--vivid-purple);
+color:white;
+box-shadow:0 4px 12px rgba(158,68,255,0.25)
+}
+.btn-primary:hover{
+background:var(--purple-hover);
+transform:translateY(-2px);
+box-shadow:0 6px 20px rgba(158,68,255,0.35)
+}
+.btn-primary:active{
+transform:translateY(0)
+}
+.btn-primary.completed{
+background:var(--vivid-purple);
+opacity:0.85
+}
+.btn-icon{
+padding:12px;
+border-radius:var(--radius);
+border:1px solid var(--border);
+background:white;
+cursor:pointer;
+transition:all 0.2s ease
+}
+.btn-icon:hover{
+background:var(--bg-hover);
+border-color:var(--vivid-purple);
+transform:scale(1.05)
+}
+.btn-icon svg{
+width:22px;
+height:22px;
+color:var(--text-secondary)
+}
+.btn-icon.active{
+background:var(--vivid-purple);
+border-color:var(--vivid-purple)
+}
+.btn-icon.active svg{
+color:white
+}
+.description-box{
+background:var(--white);
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:28px
+}
+.description-box h3{
+font-size:20px;
+font-weight:700;
+margin-bottom:14px;
+color:var(--text)
+}
+.description-box p{
+color:var(--text-secondary);
+line-height:1.8;
+margin-bottom:18px;
+font-size:15px
+}
+.description-box h4{
+font-size:16px;
+font-weight:700;
+margin-top:24px;
+margin-bottom:12px;
+color:var(--text)
+}
+.description-box ul{
+padding-left:28px
+}
+.description-box li{
+margin-bottom:10px;
+color:var(--text-secondary);
+line-height:1.6;
+font-size:14px
+}
+.search-box{
+position:relative;
+margin-bottom:28px
+}
+.search-icon{
+position:absolute;
+left:16px;
+top:50%;
+transform:translateY(-50%);
+width:20px;
+height:20px;
+color:var(--text-tertiary);
+pointer-events:none
+}
+.search-icon svg{
+width:20px;
+height:20px
+}
+.search-input{
+width:100%;
+padding:14px 20px 14px 50px;
+border:1px solid var(--border);
+border-radius:var(--radius);
+font-size:15px;
+outline:none;
+transition:all 0.2s ease;
+background:white;
+color:var(--text)
+}
+.search-input:focus{
+border-color:var(--vivid-purple);
+box-shadow:0 0 0 4px rgba(158,68,255,0.1)
+}
+.article-list{}
+.article{
+background:white;
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:22px;
+cursor:pointer;
+transition:all 0.2s ease;
+margin-bottom:14px;
+display:flex;
+align-items:center;
+gap:20px;
+box-shadow:var(--shadow-sm);
+animation:slideUp 0.3s ease calc(var(--index) * 0.06s) backwards
+}
+.article:hover{
+box-shadow:var(--shadow-md);
+transform:translateY(-3px);
+border-color:var(--vivid-purple)
+}
+.article-text{
+flex:1
+}
+.article-title{
+font-size:16px;
+font-weight:700;
+margin-bottom:8px;
+color:var(--text);
+line-height:1.4
+}
+.article-meta{
+display:flex;
+gap:14px;
+font-size:13px;
+color:var(--text-tertiary);
+font-weight:600
+}
+.article-category{
+background:var(--bg-secondary);
+padding:4px 12px;
+border-radius:5px;
+font-size:11px;
+font-weight:800;
+text-transform:uppercase;
+letter-spacing:0.5px
+}
+.article-arrow{
+width:22px;
+height:22px;
+color:var(--text-tertiary);
+transition:all 0.2s ease;
+flex-shrink:0
+}
+.article-arrow svg{
+width:22px;
+height:22px
+}
+.article:hover .article-arrow{
+color:var(--vivid-purple);
+transform:translateX(6px)
+}
+.resources-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:18px;
+margin-bottom:36px
+}
+.resource{
+background:white;
+border:1px solid var(--border);
+border-radius:var(--radius-lg);
+padding:20px;
+display:flex;
+align-items:center;
+gap:16px;
+cursor:pointer;
+transition:all 0.2s ease;
+text-decoration:none;
+color:inherit;
+box-shadow:var(--shadow-sm);
+animation:slideUp 0.3s ease calc(var(--index) * 0.05s) backwards
+}
+.resource:hover{
+box-shadow:var(--shadow-md);
+transform:translateY(-4px);
+border-color:var(--vivid-purple)
+}
+.resource-logo{
+width:52px;
+height:52px;
+border-radius:10px;
+background:var(--bg-secondary);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:800;
+color:var(--vivid-purple);
+flex-shrink:0;
+border:1px solid var(--border)
+}
+.resource-text{
+flex:1;
+min-width:0
+}
+.resource-name{
+font-size:15px;
+font-weight:700;
+margin-bottom:4px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+color:var(--text)
+}
+.resource-desc{
+font-size:12px;
+color:var(--text-secondary);
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+.resource-arrow{
+width:20px;
+height:20px;
+color:var(--text-tertiary);
+transition:all 0.2s ease;
+flex-shrink:0
+}
+.resource-arrow svg{
+width:20px;
+height:20px
+}
+.resource:hover .resource-arrow{
+color:var(--vivid-purple);
+transform:translateX(5px)
+}
+.warning{
+background:linear-gradient(135deg,rgba(251,191,36,0.06),rgba(239,68,68,0.06));
+border:2px solid #f59e0b;
+border-radius:var(--radius-lg);
+padding:22px;
+display:flex;
+gap:18px;
+animation:slideUp 0.4s ease 0.2s backwards
+}
+.warning-icon{
+width:28px;
+height:28px;
+color:#f59e0b;
+flex-shrink:0
+}
+.warning-icon svg{
+width:28px;
+height:28px
+}
+.warning-content h3{
+font-size:16px;
+font-weight:800;
+margin-bottom:10px;
+display:flex;
+align-items:center;
+gap:10px;
+color:var(--text)
+}
+.warning-content p{
+font-size:14px;
+color:var(--text-secondary);
+line-height:1.7
+}
+.empty{
+text-align:center;
+padding:100px 24px;
+animation:fadeIn 0.5s ease
+}
+.empty-icon{
+width:80px;
+height:80px;
+margin:0 auto 24px;
+color:var(--border);
+opacity:0.4
+}
+.empty-icon svg{
+width:80px;
+height:80px
+}
+.empty-text{
+font-size:16px;
+color:var(--text-tertiary);
+font-weight:500
+}
+@media(max-width:1024px){
+.modules-grid{grid-template-columns:1fr}
+.resources-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.lesson-grid{grid-template-columns:1fr}
+.lessons-sidebar{position:static;max-height:none;margin-bottom:28px}
+}
+@media(max-width:768px){
+.sidebar{display:none}
+.main{margin-left:0;padding:24px}
+.page-title{font-size:28px}
+.modules-grid{grid-template-columns:1fr}
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg-secondary)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+
+// SVG Icons
+const Icons={
+Play:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"}),React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M21 12a9 9 0 11-18 0 9 9 0 0118 0z"})),
+Book:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"})),
+Library:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"})),
+Bookmark:(props)=>React.createElement("svg",{fill:props.filled?"currentColor":"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"})),
+Video:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"})),
+Star:(props)=>React.createElement("svg",{fill:props.filled?"currentColor":"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"})),
+ChevronRight:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M9 5l7 7-7 7"})),
+ChevronLeft:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M15 19l-7-7 7-7"})),
+Clock:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"})),
+Search:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"})),
+Lock:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"})),
+Check:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M5 13l4 4L19 7"})),
+Alert:()=>React.createElement("svg",{fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},React.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"}))
+};
+
+// CircularProgress Component
+function CircularProgress({percent}){
+const r=24;
+const c=2*Math.PI*r;
+const offset=c-(percent/100)*c;
+return React.createElement("div",{className:"circle-wrap"},
+React.createElement("svg",{width:"52",height:"52"},
+React.createElement("circle",{className:"circle-bg",cx:"26",cy:"26",r:r}),
+React.createElement("circle",{className:"circle-progress",cx:"26",cy:"26",r:r,strokeDasharray:c,strokeDashoffset:offset})
+),
+React.createElement("div",{className:"circle-text"},percent,"%")
+);
+}
+
+// Main App Component
+function App(){
+const[view,setView]=useState('learning');
+const[lesson,setLesson]=useState(null);
+const[article,setArticle]=useState(null);
+const[completed,setCompleted]=useState([]);
+const[bookmarks,setBookmarks]=useState([]);
+const[search,setSearch]=useState('');
+
+// Course data from TZ PDF
+const modules=[
+{
+id:1,
+title:'Теорія with анімацією',
+subtitle:'Основи блокчейн технологій',
+emoji:'📚',
+status:'active',
+lessons:[
+{id:'l1',title:'Блокчейн',duration:'12 хв'},
+{id:'l2',title:'Сети, токени',duration:'15 хв'},
+{id:'l3',title:'Біржі, кошельки, seed',duration:'18 хв'},
+{id:'l4',title:'DEX/CEX',duration:'14 хв'},
+{id:'l5',title:'Безопасність, скам',duration:'20 хв'}
+]
+},
+{
+id:2,
+title:'Практика (з дошкою)',
+subtitle:'Механіка ринків та торгівля',
+emoji:'📊',
+status:'locked',
+lessons:[
+{id:'l6',title:'Дропи та обробка проектів',duration:'25 хв'},
+{id:'l7',title:'Дегенка та он-чейн торгівля',duration:'22 хв'},
+{id:'l8',title:'Арбітраж та ліквідність',duration:'20 хв'},
+{id:'l9',title:'Сейли, промки',duration:'18 хв'},
+{id:'l10',title:'Фармінг, стейкінг, DeFi протоколи',duration:'24 хв'},
+{id:'l11',title:'Механіка ринка и цикли',duration:'26 хв'},
+{id:'l12',title:'Психологія ринка й торговлі',duration:'22 хв'},
+{id:'l13',title:'Риск-менеджмент та управління депозитом',duration:'20 хв'},
+{id:'l14',title:'Наративи — як формируються',duration:'19 хв'}
+]
+},
+{
+id:3,
+title:'Step by Step',
+subtitle:'Практичні інструкції',
+emoji:'🎬',
+status:'locked',
+lessons:[
+{id:'l15',title:'Створення кошелька',duration:'10 хв'},
+{id:'l16',title:'Використання DEX, мостів, NFT',duration:'16 хв'},
+{id:'l17',title:'Робота з ботами та браузерами',duration:'15 хв'},
+{id:'l18',title:'Настройка Twitter',duration:'12 хв'},
+{id:'l19',title:'Моніторинг проектів, аналітика',duration:'18 хв'}
+]
+},
+{
+id:4,
+title:'Web3 Career & Business',
+subtitle:'Кар\'єра в криптоіндустрії',
+emoji:'💼',
+status:'locked',
+lessons:[
+{id:'l20',title:'Особистий бренд в крипті',duration:'24 хв'},
+{id:'l21',title:'Заробіток на реферальних програмах',duration:'20 хв'},
+{id:'l22',title:'Як попасти в команди Web3-проектів',duration:'22 хв'},
+{id:'l23',title:'Робота в сфері Web3 (SMM, маркетинг)',duration:'28 хв'},
+{id:'l24',title:'Як створити свій проект або комьюніті',duration:'30 хв'}
+]
+},
+{
+id:5,
+title:'Expert Talks',
+subtitle:'Інтерв\'ю з професіоналами',
+emoji:'🎙️',
+status:'locked',
+lessons:[
+{id:'l25',title:'Деген напрямок та ончейн торгівля',duration:'45 хв'},
+{id:'l26',title:'Менеджмент команди та Tier-1 кейси',duration:'42 хв'},
+{id:'l27',title:'Реферальні програми та курси',duration:'38 хв'},
+{id:'l28',title:'Представители тір1 біржі',duration:'50 хв'},
+{id:'l29',title:'Юрист про крипто',duration:'40 хв'},
+{id:'l30',title:'Психолог про трейдинг',duration:'44 хв'},
+{id:'l31',title:'Бізнес девелопмент та амбасадорство',duration:'46 хв'},
+{id:'l32',title:'Внутрянка проекта та лістинг',duration:'52 хв'},
+{id:'l33',title:'Побудова особистого бренду',duration:'48 хв'},
+{id:'l34',title:'100х лабс',duration:'50 хв'}
+]
+}
+];
+
+const articles=[
+{id:'a1',title:'Що таке блокчейн? Повний гід для початківців',category:'ОСНОВИ',time:'8 хв'},
+{id:'a2',title:'Топ-10 помилок новачків у криптовалютах',category:'БЕЗПЕКА',time:'6 хв'},
+{id:'a3',title:'DeFi екосистема: Як це працює',category:'DEFI',time:'12 хв'},
+{id:'a4',title:'NFT: Від мистецтва до утиліти',category:'NFT',time:'10 хв'},
+{id:'a5',title:'Стратегії управління ризиками',category:'ТРЕЙДИНГ',time:'15 хв'}
+];
+
+const resources=[
+{name:'Binance',desc:'Найбільша криптобіржа',logo:'B'},
+{name:'OKX',desc:'Глобальна крипто-платформа',logo:'O'},
+{name:'Bybit',desc:'Деривативна торгівля',logo:'By'},
+{name:'MEXC',desc:'Швидка біржа для альткоїнів',logo:'M'},
+{name:'CoinMarketCap',desc:'Ціни та капіталізація',logo:'CM'},
+{name:'CoinGecko',desc:'Криптовалютний трекер',logo:'CG'},
+{name:'Etherscan',desc:'Ethereum blockchain explorer',logo:'E'},
+{name:'DeFi Llama',desc:'TVL трекер DeFi протоколів',logo:'DL'},
+{name:'Dune Analytics',desc:'Blockchain аналітика',logo:'D'},
+{name:'TradingView',desc:'Графіки та технічний аналіз',logo:'TV'},
+{name:'MetaMask',desc:'Web3 криптогаманець',logo:'MM'},
+{name:'Trust Wallet',desc:'Мобільний криптогаманець',logo:'TW'}
+];
+
+const streams=[
+{id:'s1',title:'Аналіз ринку BTC та альткоїнів',date:'20.12.2024',duration:'1 год 15 хв'},
+{id:'s2',title:'Q&A: Відповіді на питання студентів',date:'18.12.2024',duration:'58 хв'},
+{id:'s3',title:'Розбір портфелів учнів',date:'15.12.2024',duration:'1 год 32 хв'},
+{id:'s4',title:'Стратегії для бичачого ринку',date:'12.12.2024',duration:'1 год 8 хв'}
+];
+
+const total=modules.reduce((a,m)=>a+m.lessons.length,0);
+const progress=Math.round((completed.length/total)*100);
+
+const toggleDone=(id)=>{
+setCompleted(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);
+};
+
+const toggleBookmark=(id)=>{
+setBookmarks(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);
+};
+
+const getProgress=(mod)=>{
+const done=mod.lessons.filter(l=>completed.includes(l.id)).length;
+return Math.round((done/mod.lessons.length)*100);
+};
+
+const openLesson=(les)=>{
+setLesson(les);
+setView('lesson');
+};
+
+const openArticle=(art)=>{
+setArticle(art);
+setView('article');
+};
+
+// Views Components
+const LearningView=()=>React.createElement("div",null,
+React.createElement("div",{className:"page-header"},
+React.createElement("h1",{className:"page-title"},"Вітаємо назад 👋"),
+React.createElement("p",{className:"page-subtitle"},"Продовжуйте навчання з того місця, де зупинились")
+),
+React.createElement("div",{className:"progress-section"},
+React.createElement("div",{className:"progress-top"},
+React.createElement("span",{className:"progress-label"},"Загальний прогрес"),
+React.createElement("span",{className:"progress-percent"},progress,"%")
+),
+React.createElement("div",{className:"progress-bar-wrap"},
+React.createElement("div",{className:"progress-bar",style:{width:`${progress}%`}})
+),
+React.createElement("p",{className:"progress-info"},completed.length," з ",total," уроків завершено")
+),
+React.createElement("h2",{className:"section-title"},"Продовжити навчання"),
+React.createElement("div",{className:"continue-card",onClick:()=>openLesson(modules[0].lessons[0])},
+React.createElement("div",{className:"continue-icon"},React.createElement(Icons.Play,null)),
+React.createElement("div",{className:"continue-text"},
+React.createElement("div",{className:"continue-title"},modules[0].lessons[0].title),
+React.createElement("div",{className:"continue-meta"},"Теорія with анімацією • ",modules[0].lessons[0].duration)
+),
+React.createElement("div",{className:"continue-arrow"},React.createElement(Icons.ChevronRight,null))
+),
+React.createElement("h2",{className:"section-title"},"Навчальна програма"),
+React.createElement("div",{className:"modules-grid"},
+modules.map((mod,idx)=>
+React.createElement("div",{
+key:mod.id,
+className:`module ${mod.status==='locked'?'locked':''}`,
+style:{'--index':idx}
+},
+React.createElement("div",{className:`module-cover ${mod.status}`},
+React.createElement("div",{className:"module-emoji"},mod.emoji),
+mod.status==='locked'&&React.createElement("div",{className:"lock-overlay"},
+React.createElement("div",{className:"lock-badge"},
+React.createElement(Icons.Lock,null),
+React.createElement("span",null,"Заблоковано")
+)
+)
+),
+React.createElement("div",{className:"module-body"},
+React.createElement("div",{className:"module-top"},
+React.createElement("div",{className:"module-info"},
+React.createElement("div",{className:"module-title"},mod.title),
+React.createElement("div",{className:"module-subtitle"},mod.subtitle)
+),
+mod.status!=='locked'&&React.createElement("div",{className:"progress-circle"},
+React.createElement(CircularProgress,{percent:getProgress(mod)})
+)
+),
+React.createElement("div",{className:"module-stats"},
+React.createElement("div",{className:"module-stat"},
+React.createElement(Icons.Video,null),
+React.createElement("span",null,mod.lessons.length," ",mod.lessons.length===1?'урок':mod.lessons.length<5?'уроки':'уроків')
+),
+mod.status!=='locked'&&React.createElement("div",{className:"module-stat"},
+React.createElement(Icons.Check,null),
+React.createElement("span",null,mod.lessons.filter(l=>completed.includes(l.id)).length," завершено")
+)
+)
+)
+)
+)
+)
+);
+
+const LessonView=()=>{
+const mod=modules.find(m=>m.lessons.some(l=>l.id===lesson?.id));
+return React.createElement("div",{className:"lesson-page"},
+React.createElement("button",{className:"back-btn",onClick:()=>setView('learning')},
+React.createElement(Icons.ChevronLeft,null),
+React.createElement("span",null,"Назад до курсу")
+),
+React.createElement("div",{className:"lesson-header"},
+React.createElement("h1",{className:"lesson-title"},lesson?.title),
+React.createElement("div",{className:"lesson-meta-row"},
+React.createElement("div",{className:"lesson-badge"},
+React.createElement(Icons.Clock,null),
+React.createElement("span",null,lesson?.duration)
+),
+React.createElement("div",{className:"lesson-badge"},
+React.createElement("span",null,mod?.title)
+)
+)
+),
+React.createElement("div",{className:"lesson-grid"},
+React.createElement("div",{className:"lessons-sidebar"},
+React.createElement("div",{className:"sidebar-title"},"Уроки модуля"),
+mod?.lessons.map(l=>
+React.createElement("button",{
+key:l.id,
+className:`lesson-item ${l.id===lesson?.id?'active':''} ${completed.includes(l.id)?'completed':''}`,
+onClick:()=>openLesson(l)
+},
+React.createElement("div",{className:`lesson-check ${completed.includes(l.id)?'done':''}`}),
+React.createElement("div",{className:"lesson-name"},l.title),
+React.createElement("div",{className:"lesson-time"},l.duration)
+)
+)
+),
+React.createElement("div",{className:"lesson-content"},
+React.createElement("div",{className:"video-box"},
+React.createElement("div",{className:"video-placeholder"},
+React.createElement(Icons.Play,null),
+React.createElement("div",{className:"video-placeholder-text"},"VdoCipher Player буде тут")
+)
+),
+React.createElement("div",{className:"actions"},
+React.createElement("button",{
+className:`btn btn-primary ${completed.includes(lesson?.id)?'completed':''}`,
+onClick:()=>toggleDone(lesson?.id)
+},
+completed.includes(lesson?.id)?'✓ Завершено':'Відмітити як завершений'
+),
+React.createElement("button",{
+className:`btn-icon ${bookmarks.includes(lesson?.id)?'active':''}`,
+onClick:()=>toggleBookmark(lesson?.id)
+},
+React.createElement(Icons.Bookmark,{filled:bookmarks.includes(lesson?.id)})
+)
+),
+React.createElement("div",{className:"description-box"},
+React.createElement("h3",null,"Про цей урок"),
+React.createElement("p",null,"У цьому уроці ви дізнаєтесь про основи роботи блокчейн мереж, що таке токени і як вони функціонують в екосистемі. Розглянемо найпопулярніші мережі, їх особливості та сфери застосування."),
+React.createElement("h4",null,"Ключові теми:"),
+React.createElement("ul",null,
+React.createElement("li",null,"Що таке блокчейн мережа"),
+React.createElement("li",null,"Різниця між Layer 1 та Layer 2"),
+React.createElement("li",null,"Типи токенів (utility, security, governance)"),
+React.createElement("li",null,"Основні мережі: Ethereum, Solana, Polygon")
+)
+)
+)
+)
+);
+};
+
+const LibraryView=()=>React.createElement("div",null,
+React.createElement("div",{className:"page-header"},
+React.createElement("h1",{className:"page-title"},"Бібліотека статей"),
+React.createElement("p",{className:"page-subtitle"},"Текстові матеріали та гіди")
+),
+React.createElement("div",{className:"search-box"},
+React.createElement("div",{className:"search-icon"},React.createElement(Icons.Search,null)),
+React.createElement("input",{
+type:"text",
+className:"search-input",
+placeholder:"Пошук статей...",
+value:search,
+onChange:(e)=>setSearch(e.target.value)
+})
+),
+React.createElement("div",{className:"article-list"},
+articles.map((art,idx)=>
+React.createElement("div",{
+key:art.id,
+className:"article",
+style:{'--index':idx},
+onClick:()=>openArticle(art)
+},
+React.createElement("div",{className:"article-text"},
+React.createElement("div",{className:"article-title"},art.title),
+React.createElement("div",{className:"article-meta"},
+React.createElement("span",{className:"article-category"},art.category),
+React.createElement("span",null,art.time)
+)
+),
+React.createElement("div",{className:"article-arrow"},React.createElement(Icons.ChevronRight,null))
+)
+)
+)
+);
+
+const BookmarksView=()=>{
+const saved=modules.flatMap(m=>m.lessons).filter(l=>bookmarks.includes(l.id));
+return React.createElement("div",null,
+React.createElement("div",{className:"page-header"},
+React.createElement("h1",{className:"page-title"},"Закладки"),
+React.createElement("p",{className:"page-subtitle"},
+saved.length>0?`Збережено ${saved.length} уроків`:'Немає збережених матеріалів'
+)
+),
+saved.length===0?
+React.createElement("div",{className:"empty"},
+React.createElement("div",{className:"empty-icon"},React.createElement(Icons.Bookmark,null)),
+React.createElement("p",{className:"empty-text"},"Додайте уроки в закладки, щоб швидко повертатись до них")
+):
+saved.map(les=>
+React.createElement("div",{
+key:les.id,
+className:"continue-card",
+onClick:()=>openLesson(les)
+},
+React.createElement("div",{className:"continue-icon"},React.createElement(Icons.Play,null)),
+React.createElement("div",{className:"continue-text"},
+React.createElement("div",{className:"continue-title"},les.title),
+React.createElement("div",{className:"continue-meta"},les.duration)
+),
+React.createElement("button",{
+className:"btn-icon active",
+onClick:(e)=>{e.stopPropagation();toggleBookmark(les.id)}
+},
+React.createElement(Icons.Bookmark,{filled:true})
+)
+)
+)
+);
+};
+
+const ResourcesView=()=>React.createElement("div",null,
+React.createElement("div",{className:"page-header"},
+React.createElement("h1",{className:"page-title"},"Корисні матеріали"),
+React.createElement("p",{className:"page-subtitle"},"Перевірені сервіси та ресурси для роботи з криптовалютами")
+),
+React.createElement("h2",{className:"section-title"},"Біржі та сервіси"),
+React.createElement("div",{className:"resources-grid"},
+resources.map((res,idx)=>
+React.createElement("a",{
+key:idx,
+href:"#",
+className:"resource",
+style:{'--index':idx},
+onClick:(e)=>e.preventDefault()
+},
+React.createElement("div",{className:"resource-logo"},res.logo),
+React.createElement("div",{className:"resource-text"},
+React.createElement("div",{className:"resource-name"},res.name),
+React.createElement("div",{className:"resource-desc"},res.desc)
+),
+React.createElement("div",{className:"resource-arrow"},React.createElement(Icons.ChevronRight,null))
+)
+)
+),
+React.createElement("div",{className:"warning"},
+React.createElement("div",{className:"warning-icon"},React.createElement(Icons.Alert,null)),
+React.createElement("div",{className:"warning-content"},
+React.createElement("h3",null,"⚠️ Важливо для безпеки"),
+React.createElement("p",null,"Ніколи не шукайте посилання на криптосервіси через Google! Шахраї часто створюють фейкові сайти, які виглядають як оригінали. Завжди використовуйте тільки офіційні посилання, які ми надаємо тут, або вводьте адреси вручну. Перевіряйте URL перед входом на сайт. Ваша безпека - наш пріоритет!")
+)
+)
+);
+
+const StreamsView=()=>React.createElement("div",null,
+React.createElement("div",{className:"page-header"},
+React.createElement("h1",{className:"page-title"},"Стріми"),
+React.createElement("p",{className:"page-subtitle"},"Записи прямих ефірів")
+),
+React.createElement("div",{className:"article-list"},
+streams.map((str,idx)=>
+React.createElement("div",{
+key:str.id,
+className:"article",
+style:{'--index':idx}
+},
+React.createElement("div",{className:"article-text"},
+React.createElement("div",{className:"article-title"},str.title),
+React.createElement("div",{className:"article-meta"},
+React.createElement("span",null,str.date),
+React.createElement("span",null,str.duration)
+)
+),
+React.createElement("div",{className:"article-arrow"},React.createElement(Icons.ChevronRight,null))
+)
+)
+)
+);
+
+// Main Render
+return React.createElement("div",{className:"app-container"},
+React.createElement("aside",{className:"sidebar"},
+React.createElement("div",{className:"sidebar-header"},
+React.createElement("div",{className:"logo",onClick:()=>setView('learning')},
+React.createElement("div",{className:"logo-shapes"},
+React.createElement("div",{className:"shape shape-1"}),
+React.createElement("div",{className:"shape shape-2"}),
+React.createElement("div",{className:"shape shape-3"}),
+React.createElement("div",{className:"shape shape-4"}),
+React.createElement("div",{className:"shape shape-5"})
+),
+React.createElement("div",{className:"logo-text"},
+React.createElement("div",{className:"logo-main"},"WEB3HUB"),
+React.createElement("div",{className:"logo-sub"},"EDUCATION"),
+React.createElement("div",{className:"logo-author"},"by a01k")
+)
+)
+),
+React.createElement("nav",{className:"nav"},
+React.createElement("button",{
+className:`nav-item ${view==='learning'||view==='lesson'?'active':''}`,
+onClick:()=>setView('learning')
+},
+React.createElement("div",{className:"nav-icon"},React.createElement(Icons.Book,null)),
+React.createElement("span",null,"Учебна програма")
+),
+React.createElement("button",{
+className:`nav-item ${view==='library'||view==='article'?'active':''}`,
+onClick:()=>setView('library')
+},
+React.createElement("div",{className:"nav-icon"},React.createElement(Icons.Library,null)),
+React.createElement("span",null,"Бібліотека")
+),
+React.createElement("button",{
+className:`nav-item ${view==='bookmarks'?'active':''}`,
+onClick:()=>setView('bookmarks')
+},
+React.createElement("div",{className:"nav-icon"},React.createElement(Icons.Bookmark,null)),
+React.createElement("span",null,"Закладки")
+),
+React.createElement("button",{
+className:`nav-item ${view==='streams'?'active':''}`,
+onClick:()=>setView('streams')
+},
+React.createElement("div",{className:"nav-icon"},React.createElement(Icons.Video,null)),
+React.createElement("span",null,"Стріми")
+),
+React.createElement("button",{
+className:`nav-item ${view==='resources'?'active':''}`,
+onClick:()=>setView('resources')
+},
+React.createElement("div",{className:"nav-icon"},React.createElement(Icons.Star,null)),
+React.createElement("span",null,"Корисні матеріали")
+)
+),
+React.createElement("div",{className:"sidebar-footer"},
+React.createElement("div",{className:"user-card"},
+React.createElement("div",{className:"user-avatar"},"К"),
+React.createElement("div",{className:"user-info"},
+React.createElement("div",{className:"user-name"},"Користувач"),
+React.createElement("div",{className:"user-days"},"Ще 59 днів доступу")
+)
+)
+)
+),
+React.createElement("main",{className:"main"},
+view==='learning'&&React.createElement(LearningView,null),
+view==='lesson'&&React.createElement(LessonView,null),
+view==='library'&&React.createElement(LibraryView,null),
+view==='bookmarks'&&React.createElement(BookmarksView,null),
+view==='resources'&&React.createElement(ResourcesView,null),
+view==='streams'&&React.createElement(StreamsView,null)
+)
+);
+}
+
+ReactDOM.render(React.createElement(App),document.getElementById('root'));
+</script>
+</body>
+</html>
